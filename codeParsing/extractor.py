@@ -20,9 +20,20 @@ def getType(globals):
         return globals[-1]
 
 
-def getValueAsString(globals):
+def getValueAsString(globals):  # TODO
+
     temp = re.findall(r'[\d.]*', globals)
     temp = [x for x in temp if x]
+
+    if getType(globals) == "F":  # float array
+        return temp
+    if getType(globals) == "I":  # Integer Array
+        return temp
+    if getType(globals) == "D":  # Double Array
+        return temp
+    if getType(globals) == "L":  # Long Array
+        return temp
+
     return temp[0]
 
 
@@ -36,10 +47,12 @@ class Extractor:
             if type(globals_scoped_instances) is not list:
                 if ")" in globals_scoped_instances:
 
-                    self.function_dict[getName(globals_scoped_instances)] = {"args": getNumberOfArgs(globals_scoped_instances)}
+                    self.function_dict[getName(globals_scoped_instances)] = {
+                        "args": getNumberOfArgs(globals_scoped_instances)}
                     last_fun = getName(globals_scoped_instances)
                 else:
                     self.global_dict[getName(globals_scoped_instances)] = {"type": getType(globals_scoped_instances),
-                                                                           "value": getValueAsString(globals_scoped_instances)}
+                                                                           "value": getValueAsString(
+                                                                               globals_scoped_instances)}
             else:
                 self.function_dict[last_fun]["code"] = globals_scoped_instances

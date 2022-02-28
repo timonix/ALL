@@ -7,10 +7,11 @@ class TestFindBraces(unittest.TestCase):
 
     def test_simple(self):
         ex = Extractor()
-        code = ['a=0', 'main(0)', ['q=1', 'fun(q)'], 'b=<1.0>f', 'fun(1)', ['returna']]
-        test = ex.extract_globals(code)
-        print(ex.function_dict)
-        print(ex.global_dict)
+        code = ['a=0', 'main(0)', ['q=1', 'fun(q)'], 'b=<1.0,2.0>F', "c=<4>A", 'fun(1)', ['returna']]
+        ex.extract_globals(code)
+
+        self.assertEqual({'main': {'args': 0, 'code': ['q=1', 'fun(q)']}, 'fun': {'args': 1, 'code': ['returna']}}, ex.function_dict)
+        self.assertEqual({'a': {'type': 'i', 'value': '0'}, 'b': {'type': 'F', 'value': ['1.0', '2.0']}, 'c': {'type': 'A', 'value': '4'}}, ex.global_dict)
 
     def test_func(self):
 

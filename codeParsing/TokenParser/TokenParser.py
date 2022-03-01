@@ -24,7 +24,10 @@ class TokenParser:
     def __init__(self, input):
         self.code = input
 
+
     def parse_next(self):
+
+
         if simpleAssignment.match(self.code):
 
     def parseTokenList(self, input):

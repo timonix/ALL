@@ -1,0 +1,20 @@
+code_0 = [
+    {"type": "define"},
+    {"type": "function", "name": "main"},
+    {"type": "("},
+    {"type": "keyword_void"},
+    {"type": ")"},
+    {"type": "{"},
+    {"type": "newLine"},
+    {"type": "define"},
+    {"type": "variable", "name": "foo"},
+    {"type": "set"},
+    {"type": "keyword_int"},
+    {"type": "set_initial"},
+    {"type": "integer", "value": 0},
+    {"type": "newLine"},
+    {"type": "keyword_return"},
+    {"type": "variable", "name": "foo"},
+    {"type": "newLine"},
+    {"type": "}"}
+]

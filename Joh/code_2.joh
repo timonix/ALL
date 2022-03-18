@@ -1,4 +1,4 @@
-def fun_1(foo){
+def fun_1(int foo){
     foo[0..1] = [4,5]
     return 0
 }

@@ -61,6 +61,7 @@ code_2 = [
     {"type": "define"},
     {"type": "function", "name": "fun_1"},
     {"type": "("},
+    {'type': 'keyword_int'},
     {"type": "variable", "name": "foo"},
     {"type": ")"},
     {"type": "{"},

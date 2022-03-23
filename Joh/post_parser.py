@@ -27,36 +27,55 @@ code_1 = {
         "main": {
             "code": [
                 {
-                    "for": {
-                        "loop_variable": "foo",
-                        "local_variable": {"j": {"type": "integer"}},
-                        "array_index": [0, 1],
-                        "code": [
-                            {
-                                "set": {
-                                    "left": {"type": "variable", "name": "j"},
-                                    "expression": {
-                                        "type": "add",
-                                        "arguments": [
-                                            {"type": "variable", "name": "j"},
-                                            {"type": "integer", "value": 1},
-                                        ],
-                                    },
-                                }
-                            }
-                        ],
+                    "set": {
+                        "target": {"type": "index", "name": "j.index"},
+                        "expression": {"type": "integer", "value": 0},
+                    }
+                },
+                {"Label": 0},
+                {
+                    "set": {
+                        "target": {"type": "variable", "name": "j"},
+                        "expression": {
+                            "type": "indexed_variable",
+                            "name": "foo",
+                            "index": "j.index",
+                        },
+                    }
+                },
+                {
+                    "set": {
+                        "target": {"type": "variable", "name": "j"},
+                        "expression": {
+                            "type": "add",
+                            "left": {"type": "variable", "name": "j"},
+                            "right": {"type": "integer", "value": 1},
+                        },
+                    }
+                },
+                {
+                    "if": {
+                        "target_label": 0,
+                        "expression": {
+                            "type": "not_equals",
+                            "left": {"type": "index", "name": "j.index"},
+                            "right": {"type": "integer", "value": 1},
+                        },
                     }
                 },
                 {"return": {"argument": {"type": "variable", "name": "foo"}}},
             ],
             "local_variables": {
+                "j": {"type": "integer"},
+                "j.index": {"type": "index"},
                 "foo": {
                     "type": "integer_array",
                     "length": 2,
                     "initial": {"type": "integer_array", "value": [0, 1]},
-                }
+                },
             },
             "arguments": [],
         }
     },
 }
+

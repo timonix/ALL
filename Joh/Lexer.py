@@ -38,7 +38,8 @@ prio_6 = [
     {"regex": r"^\D\w* *(?=\()", "type": "function", "name": ""},
     {"regex": r"^\[\d+\] *", "type": "single_index", "value": ""},
     {"regex": r"^\[[\d+,]+\] *", "type": "array_index", "indices": []},
-    {"regex": r"^\[\d+\.\.\d+\] *", "type": "array_index", "indices": []}
+    {"regex": r"^\[\d+\.\.\d+\] *", "type": "array_index", "indices": []},
+    {"regex": r"^\D\w*\.index *", "type": "index", "name": ""}
 ]
 
 prio_7 = [

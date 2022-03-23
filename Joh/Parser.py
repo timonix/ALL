@@ -29,14 +29,16 @@ def token_sequence_in_list(sequence, list_of_tokens):
     return True
 
 
-def get_locals(function):
+def get_locals(function, global_variables):
     locals_variables = {}
-    for s in split_by_line(function):
+    code = []
+    for s in function:
         define_array_sequence_with_initial = ["define", "variable", "set", "keyword_int", "single_index", "set_initial",
                                               "array_index"]
         define_array_sequence = ["define", "variable", "set", "keyword_int", "single_index"]
         define_integer_sequence_with_initial = ["define", "variable", "set", "keyword_int", "set_initial", "integer"]
         define_integer_sequence = ["define", "variable", "set", "keyword_int"]
+        define_for_variables = ['keyword_for', '(', 'variable', ':', 'variable', ')', '{']
 
         if token_sequence_in_list(define_array_sequence_with_initial, s):
             locals_variables[s[1]["name"]] = {"type": "integer_array",
@@ -51,7 +53,16 @@ def get_locals(function):
         elif token_sequence_in_list(define_integer_sequence, s):
             locals_variables[s[1]["name"]] = {"type": "integer"}
 
-    return locals_variables
+        elif token_sequence_in_list(define_for_variables, s):
+            if s[4]["name"] in locals_variables:
+                if locals_variables[s[4]["name"]]["type"] == "integer_array":
+                    locals_variables[s[2]["name"]] = {"type": "integer"}
+                    locals_variables[s[2]["name"]+".index"] = {"type": "index"}
+            code.append(s)
+        else:
+            code.append(s)
+
+    return code, locals_variables
 
 
 def split_by_line(function):
@@ -74,13 +85,36 @@ def parseCodeLine(line):
     pass
 
 
-def get_code(function):
-    code = []
-    for s in split_by_line(function):
-        if s[0]["type"] != "define":
-            code.append(parseCodeLine(s))
+def parse_for_loop(code):
 
-    return code
+    print(code)
+    pass
+
+
+def parse_code(code):
+
+    return_sequence = ["keyword_return"]
+    for_sequence = ["keyword_for"]
+
+    if token_sequence_in_list(return_sequence, code[0]):
+        return code[1:], [{"return": {"argument": code[0][1]}}]
+    if token_sequence_in_list(for_sequence, code[0]):
+        return parse_for_loop(code)
+
+    return code, []
+
+
+def get_code(function):
+    parsed_code = []
+    code = function
+
+    for i in range(10):
+        code, parsed = parse_code(code)
+        parsed_code.extend(parsed)
+        if len(code) == 0:
+            return parsed
+
+    return []
 
 
 def extract_single_global(i, code):
@@ -108,18 +142,23 @@ def get_first_function_start(code):
             return i;
 
 
+def removeHeader(code_lines):
+    return code_lines[1:]
+
+
 def parse(code):
     parsed_code = {}
     raw_functions = extract_functions(code)
     first_function_start = get_first_function_start(code)
+    parsed_code["global_variables"] = extract_globals(code, first_function_start)
 
     for fun in raw_functions.items():
         args = get_arguments(fun[1])
         parsed_code["functions"] = {fun[0]: {"arguments": args}}
-        parsed_code["functions"][fun[0]]["local_variables"] = get_locals(fun[1])
-        parsed_code["functions"][fun[0]]["code"] = get_code(fun[1])
-
-    parsed_code["global_variables"] = extract_globals(code, first_function_start)
+        code_lines = split_by_line(fun[1])
+        code_lines = removeHeader(code_lines)
+        code_lines, parsed_code["functions"][fun[0]]["local_variables"] = get_locals(code_lines, parsed_code["global_variables"])
+        parsed_code["functions"][fun[0]]["code"] = get_code(code_lines)
 
     return parsed_code
 

@@ -2,6 +2,9 @@
 # tile 0 can be next to tile 0
 # tile 1 can be next to nothing
 
+import copy
+
+
 class Tile:
     def __init__(self, tile_type):
         self.type = tile_type
@@ -57,21 +60,17 @@ class MetaTile:
                     for t in tile.valid_neighbour[direction]:
                         self.valid_neighbours[direction].add(t)
 
+    def axis_change(self, coordinate, axis, change):
+        c = list(coordinate)
+        c[axis] += change
+        return tuple(c)
+
     def neighbouring_tiles(self):
         n = {}
-
-        for direction in MetaTile.directions.values():
-            print(direction)
-        print(self.world)
-
-        if (self.location[0] - 1, self.location[1]) in self.world:
-            n["west"] = self.world[self.location[0] - 1, self.location[1]]
-        if (self.location[0] + 1, self.location[1]) in self.world:
-            n["east"] = self.world[self.location[0] + 1, self.location[1]]
-        if (self.location[0], self.location[1] - 1) in self.world:
-            n["north"] = self.world[self.location[0], self.location[1] - 1]
-        if (self.location[0], self.location[1] + 1) in self.world:
-            n["south"] = self.world[self.location[0], self.location[1] + 1]
+        for dir, axis in MetaTile.directions.items():
+            new_coord = self.axis_change(self.location, abs(axis)-1, int(axis/abs(axis)))
+            if new_coord in self.world:
+                n[dir] = self.world[new_coord]
         return n
 
     def collapse(self):
@@ -87,7 +86,8 @@ class MetaTile:
 grid = {}
 for x in range(2):
     for y in range(2):
-        grid[(x, y, None)] = (MetaTile((x, y), grid))
+        for z in range(2):
+            grid[(x, y, z)] = (MetaTile((x, y, z), grid))
 
 for mt in grid.values():
     print(mt.valid_tiles)
@@ -103,4 +103,4 @@ print()
 for mt in grid.values():
     print(mt.valid_tiles)
 
-print(grid[(0, 0)].valid_neighbours)
+print(grid[(0, 0, 0)].valid_neighbours)
